@@ -13,6 +13,7 @@ import javax.swing.JTable;
 public class MyFrame extends JTable{
     String [] columns ;
     String [][] rowsData ;
+    set
 
     public String[] getColumns() {
         return columns;
@@ -30,5 +31,5 @@ public class MyFrame extends JTable{
         this.rowsData = rowsData;
     }
 
-    
+
 }
