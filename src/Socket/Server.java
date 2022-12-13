@@ -4,6 +4,8 @@
  */
 package Socket;
 
+import affichage.MyFrame;
+import affichage.TableInfo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,56 +13,67 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
-import javax.swing.JTable;
-import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 /**
  *
  * @author itu
  */
-public class Server {
-    static String[] columns = {"os","address ip","address mac","RAM"};
-    static int colonsFilled = 0;
+public class Server extends Thread {
+    Socket client ;
+    static MyFrame myFrame ;
+    int numLine ;
     
-    public static JFrame parkInfo (String[][]rowData){
-        JFrame jframe = new JFrame();
-        JTable jtable = new JTable(rowData, columns);
-        
-        jframe.add(jtable);
-        jframe.pack();
-        jframe.setVisible(true);
-        jframe.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
-        return jframe ;
+    public Socket getClient() {
+        return client;
+    }
+
+    public void setClient(Socket client) {
+        this.client = client;
+    }
+
+    public static MyFrame getMyFrame() {
+        return myFrame;
+    }
+
+    public static void setMyFrame() {
+        myFrame = new MyFrame(new TableInfo(6,20));
+    }
+
+    public Server(Socket client) {
+        setClient(client);
     }
     
-//    public static void instanciate2DArray(String[][] arrays){
-//        arrays = new String[20][];
-//        for(int i = 0 ; i < arrays.length ; i++){
-//            arrays[i] = new String[columns.length];
-//        }
-//    }
-//    
-    public static void addTo2dArray(String[][]arrays, String[]toAdd){
-        arrays[colonsFilled] = toAdd;
-        colonsFilled ++;
+    
+    public void traitementsDonnees(){
+        try {
+            BufferedReader reader = new BufferedReader (new InputStreamReader(client.getInputStream()));
+            String message = reader.readLine();
+            String[] messageSplited = message.split(",");
+            myFrame.getTableInfo().addLine(messageSplited, numLine );
+            numLine++;
+            
+            client.close();
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void run() {
+        traitementsDonnees();
     }
     
     public static void main(String[] args)  {
         try {
             ServerSocket serverSocket = new ServerSocket(6969);
-            Socket client = serverSocket.accept();
-            BufferedReader reader = new BufferedReader (new InputStreamReader(client.getInputStream()));
-            String message = reader.readLine();
-            
-            String[] messageSplited = message.split(",");
-            String[][] rowDatas = new String[5][columns.length];
-            addTo2dArray(rowDatas, messageSplited);
-            
-            parkInfo(rowDatas);
-            
-            serverSocket.close();
+            setMyFrame();
+            while (true) {                
+                Socket socket = serverSocket.accept();
+                Server server = new Server(socket);
+                server.start();
+            }
+                        
         } 
         catch (IOException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);

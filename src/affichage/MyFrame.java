@@ -4,32 +4,31 @@
  */
 package affichage;
 
-import javax.swing.JTable;
+import javax.swing.JFrame;
 
 /**
  *
  * @author itu
  */
-public class MyFrame extends JTable{
-    String [] columns ;
-    String [][] rowsData ;
-    set
+public class MyFrame extends JFrame{
+    TableInfo tableInfo ;
 
-    public String[] getColumns() {
-        return columns;
+    public TableInfo getTableInfo() {
+        return tableInfo;
     }
 
-    public void setColumns(String[] columns) {
-        this.columns = columns;
+    public void setTableInfo(TableInfo tableInfo) {
+        this.tableInfo = tableInfo;
+    }
+    
+    public MyFrame(TableInfo ti){
+        setTableInfo(ti);
+        add(tableInfo);
+        pack();
+        setResizable(false);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setVisible(true);
     }
 
-    public String[][] getRowsData() {
-        return rowsData;
-    }
-
-    public void setRowsData(String[][] rowsData) {
-        this.rowsData = rowsData;
-    }
-
-
+    
 }
