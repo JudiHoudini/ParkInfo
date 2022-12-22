@@ -33,13 +33,13 @@ public class TableInfo extends JTable {
     public TableInfo(int columns, int lines){
         super(lines, columns);
         setValueAt("OS", 0, 0);
-        setValueAt("IP", 0, 1);
-        setValueAt("AdresseMac", 0, 2);
-        setValueAt("RAM", 0, 3);
-        setValueAt("user", 0, 4);
-        setValueAt("CPU", 0, 5);
-
-        
+        setValueAt("OSVERSION", 0, 1);
+        setValueAt("IP", 0, 2);
+        setValueAt("Adress Mac", 0, 3);
+        setValueAt("RAM", 0, 4);
+        setValueAt("user", 0, 5);
+        setValueAt("CPU", 0, 6);
+        setValueAt("Free Disk ", 0, 7);
     }
     
     public void addLine(String[]linesContent , int numLine){

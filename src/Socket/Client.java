@@ -1,5 +1,6 @@
 import com.sun.management.OperatingSystemMXBean;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
@@ -29,14 +30,9 @@ public class Client  {
     public static String getAddressMac() throws UnknownHostException, SocketException{
         InetAddress localIp = InetAddress.getLocalHost();
         NetworkInterface ni = NetworkInterface.getByInetAddress(localIp);
-        
-        System.out.println(localIp);
-        System.out.println(ni);
-        
+               
         byte[] macAdress = ni.getHardwareAddress();
-        
-        System.out.println(macAdress);
-        
+                
         String[] hexadecimal = new String[macAdress.length];
         for (int i = 0; i < hexadecimal.length; i++) {
             hexadecimal[i] = String.format("%02X", macAdress[i]);
@@ -50,12 +46,15 @@ public class Client  {
         return mXBean.getTotalMemorySize();
     }
     
+    public static double getFreeDiskMemory(){
+        return new File("/").getFreeSpace()*9.31e-10;
+    }
+    
     public static void main(String[] args) {
         // TODO code application logic here  
-//        Scanner input = new Scanner(System.in);
         try {
             OperatingSystemMXBean mXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-            //
+            //creating the client socket 
             Socket client = new Socket("localhost",6969);
             DataOutputStream send = new DataOutputStream(client.getOutputStream());
             //os , ip , adresse mac , ram  , 
@@ -65,17 +64,21 @@ public class Client  {
             String ram = String.valueOf(getRam());
             String user = System.getProperty("user.name");
             String CPU = String.valueOf(mXBean.getSystemLoadAverage() / mXBean.getAvailableProcessors());
+            String freeSpace = String.valueOf(getFreeDiskMemory());
+            String osVersion = System.getProperty("os.version");
             
             Vector<String> properties = new Vector<>();
             properties.add(os);
+            properties.add(osVersion);
             properties.add(ip);
             properties.add(addressMac);
             properties.add(ram + "bytes");
             properties.add(user);
             properties.add(CPU);
+            properties.add(freeSpace);
             
             String toSend = "";
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 8; i++) {
                 toSend += properties.get(i) + ",";
             }
             

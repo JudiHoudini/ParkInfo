@@ -21,8 +21,8 @@ import java.util.logging.Logger;
 public class Server extends Thread {
     Socket client ;
     static MyFrame myFrame ;
-    int numLine = 1 ;
-
+    static int numLine = 1 ;
+    
     public Socket getClient() {
         return client;
     }
@@ -36,14 +36,14 @@ public class Server extends Thread {
     }
 
     public static void setMyFrame() {
-        myFrame = new MyFrame(new TableInfo(6,20));
+        myFrame = new MyFrame(new TableInfo(8,20));
     }
 
     public Server(Socket client) {
         setClient(client);
     }
-
-
+    
+    
     public void traitementsDonnees(){
         try {
             BufferedReader reader = new BufferedReader (new InputStreamReader(client.getInputStream()));
@@ -51,32 +51,34 @@ public class Server extends Thread {
             String[] messageSplited = message.split(",");
             myFrame.getTableInfo().addLine(messageSplited, numLine );
             numLine++;
-
+            
+            System.out.println(numLine);
+            
             client.close();
-        }
+        } 
         catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void run() {
+    public void run() { 
         traitementsDonnees();
     }
-
+    
     public static void main(String[] args)  {
         try {
             ServerSocket serverSocket = new ServerSocket(6969);
             setMyFrame();
-            while (true) {
+            while (true) {                
                 Socket socket = serverSocket.accept();
                 Server server = new Server(socket);
                 server.start();
             }
-
-        }
+        } 
         catch (IOException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
+ 
